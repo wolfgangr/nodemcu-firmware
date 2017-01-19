@@ -65,7 +65,8 @@ void ping_received(void *arg, void *data) {
       lua_pushinteger(gL, pingresp->bytes);
       lua_pushstring(gL, ipaddrstr);
       lua_pushinteger(gL, pingresp->seqno);
-      lua_pushinteger(gL, pingresp->ttl);
+      // lua_pushinteger(gL, pingresp->ttl);
+      lua_pushinteger(gL, 99999);
       lua_pushinteger(gL, pingresp->resp_time);
       lua_call(gL, 5, 0);
     } else {
@@ -73,7 +74,8 @@ void ping_received(void *arg, void *data) {
 	       pingresp->bytes,
 	       ipaddrstr,
 	       pingresp->seqno,
-	       pingresp->ttl,
+	       /// pingresp->ttl,
+	       99999,
 	       pingresp->resp_time);
     }
 }
