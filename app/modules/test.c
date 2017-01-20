@@ -51,11 +51,17 @@ void ping_received(void *arg, void *data) {
     struct ping_option *pingopt = pingmsg->ping_opt;
     struct ping_resp *pingresp = (struct ping_resp*)data;
 
+    c_printf("[wjr] what do we have in ping_recieved? | arg= %X | data= %X | pingmsg= %X | pingopt= %X | pingresp = %X | \n", 
+	      arg, data, pingmsg, pingopt, pingresp);
+    
     char ipaddrstr[16];
     ip_addr_t source_ip;
     
+    c_printf("[wjr] before accessing pingopt\n");
     source_ip.addr = pingopt->ip;
+    c_printf("[wjr] after accessing pingopt\n");
     ipaddr_ntoa_r(&source_ip, ipaddrstr, sizeof(ipaddrstr));
+    c_printf("[wjr] after ipaddr_ntoa_r\n");
 
     // if we've registered a lua callback function, retrieve
     // it from registry + call it, otherwise just print the ping
@@ -96,6 +102,7 @@ static void ping_by_hostname(const char *name, ip_addr_t *ipaddr, void *arg) {
     ping_opt->recv_function = &ping_received;
     
     ping_start(ping_opt);
+    // ping_start(ping_opt *);
 }
 
 
@@ -143,6 +150,8 @@ static int test_ping(lua_State *L)
 	count = luaL_checkinteger(L, 2);
     }
    
+    c_printf("[wjr] checked number arg\n");
+    
     // retrieve callback arg (optional)
     if (ping_callback_ref != LUA_NOREF) 
       luaL_unref(L, LUA_REGISTRYINDEX, ping_callback_ref);
@@ -154,9 +163,14 @@ static int test_ping(lua_State *L)
     gL = L;   // global L
 
 
+    c_printf("[wjr] checked callback arg\n");
+    
+    
     // attempt to parse ping target as IP
     uint32 ip = ipaddr_addr(ping_target);
 
+    c_printf("[wjr] checked IP conversion - result 0x%08X from %s \n", ip, ping_target);
+    
     if (ip != IPADDR_NONE) {
 	struct ping_option *ping_opt = (struct ping_option *)c_zalloc(sizeof(struct ping_option));
 
@@ -165,8 +179,12 @@ static int test_ping(lua_State *L)
 	ping_opt->coarse_time = 0;
 	ping_opt->recv_function = &ping_received;
 
+	c_printf("[wjr] just befor calling ping_start | %i | 0x%08X  | %i | %X |\n", ping_opt->count, ping_opt->ip, ping_opt->coarse_time, ping_opt->recv_function);
+	
 	ping_start(ping_opt);
+	
     } else {
+        return luaL_error(L, "[wjr] dns lookup ###ToDo");
 	ping_host_count = count;
 
 	struct espconn *ping_dns_lookup;
