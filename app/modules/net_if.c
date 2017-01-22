@@ -101,10 +101,12 @@ static int first_adr2( lua_State *L) {
 // now try an iterator:
 // for(tmp=start;tmp->next!=NULL;tmp=tmp->next);
 static int list_adr( lua_State *L) {
-  struct netif *i ;
-  for ( i = netif_list ; i->next != NULL ; i = i->next ) {
+  struct netif *i = netif_list ;
+  // for ( i = netif_list ; i->next != NULL ; i = i->next ) {
+  do {
     print_adr(i);
-  } 
+    // i = i->next
+  } while ( i = i->next );  // can we rely on side effects in C?
 }
 
 
