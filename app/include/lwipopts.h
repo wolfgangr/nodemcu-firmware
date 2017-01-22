@@ -1141,6 +1141,8 @@
  * LWIP_NETIF_LOOPBACK==1: Support sending packets with a destination IP
  * address equal to the netif IP address, looping them back up the stack.
  */
+#define LWIP_NETIF_LOOPBACK             1
+
 #ifndef LWIP_NETIF_LOOPBACK
 #define LWIP_NETIF_LOOPBACK             0
 #endif
@@ -1149,6 +1151,9 @@
  * LWIP_LOOPBACK_MAX_PBUFS: Maximum number of pbufs on queue for loopback
  * sending for each netif (0 = disabled)
  */
+
+#define LWIP_LOOPBACK_MAX_PBUFS 	1
+
 #ifndef LWIP_LOOPBACK_MAX_PBUFS
 #define LWIP_LOOPBACK_MAX_PBUFS         0
 #endif
@@ -1191,6 +1196,9 @@
 /**
  * LWIP_HAVE_LOOPIF==1: Support loop interface (127.0.0.1) and loopif.c
  */
+
+#define LWIP_HAVE_LOOPIF 		1
+
 #ifndef LWIP_HAVE_LOOPIF
 #define LWIP_HAVE_LOOPIF                0
 #endif
