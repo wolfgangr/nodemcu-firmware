@@ -61,6 +61,7 @@
 //#define LUA_USE_MODULES_SWITEC
 // tutorial example
 #define LUA_USE_MODULES_NET_INFO
+#define LUA_USE_MODULES_NET_IF
 //#define LUA_USE_MODULES_TM1829
 #define LUA_USE_MODULES_TLS
 #define LUA_USE_MODULES_TMR
