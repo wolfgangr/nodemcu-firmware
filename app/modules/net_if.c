@@ -56,8 +56,102 @@ static lua_State *gL = NULL;
 static int first_IF( lua_State *L) {
 
   c_printf("netif_list: 0x%X \n", netif_list ) ;
-  return 1;
+  // return 1;
+  return 0;
 }
+
+
+static int first_adr( lua_State *L) {
+
+  c_printf("first interfaces at 0x%X next: 0x%X  IP: %X netmask: %X gw: %X  \n", 
+	netif_list, netif_list->next,  netif_list->ip_addr, netif_list->netmask, netif_list->gw 
+   );
+  // return 1;
+  return 0;
+}
+
+
+/*
+struct netif {
+  ** pointer to next in linked list *
+  struct netif *next;
+
+  ** IP address configuration in network byte order *
+  ip_addr_t ip_addr;
+  ip_addr_t netmask;
+  ip_addr_t gw;
+
+   *  to pass a packet up the TCP/IP stack. 
+  netif_input_fn input;
+
+  netif_output_fn output;
+  .. by ARP
+  netif_linkoutput_fn linkoutput;
+
+  netif_status_callback_fn status_callback;
+
+*/
+
+/*
+....if LWIP_DHCP
+  ** the DHCP client state information for this netif *
+  struct dhcp *dhcp;
+  struct udp_pcb *dhcps_pcb;    //dhcps
+  dhcp_event_fn dhcp_event;
+
+  struct autoip *autoip;
+
+  char*  hostname;
+
+  ** maximum transfer unit (in bytes) 
+  u16_t mtu;
+  ** number of bytes used in hwaddr
+  u8_t hwaddr_len;
+  ** link level hardware address of this interface 
+  u8_t hwaddr[NETIF_MAX_HWADDR_LEN];
+  ** flags (see NETIF_FLAG_ above) 
+  u8_t flags;
+  ** descriptive abbreviation 
+  char name[2];
+  ** number of this interface 
+  u8_t num;
+*/
+
+
+/*
+#if LWIP_SNMP
+  ** link type (from "snmp_ifType" enum from snmp.h) *  u8_t link_type;
+  ** (estimate) link speed *
+  u32_t link_speed;
+  ** timestamp at last change made (up/down) *
+  u32_t ts;
+  ** counters *
+  u32_t ifinoctets;
+  u32_t ifinucastpkts;
+  u32_t ifinnucastpkts;
+  u32_t ifindiscards;
+  u32_t ifoutoctets;
+  u32_t ifoutucastpkts;
+  u32_t ifoutnucastpkts;
+  u32_t ifoutdiscards;
+
+*/
+
+/*
+
+#if LWIP_IGMP
+  ** This function could be called to add or delete a entry in the multicast
+      filter table of the ethernet MAC.*
+  netif_igmp_mac_filter_fn igmp_mac_filter;
+#endif * LWIP_IGMP *
+#if LWIP_NETIF_HWADDRHINT
+  u8_t *addr_hint;
+#endif * LWIP_NETIF_HWADDRHINT *
+*/
+
+
+
+//=======================~~~~~~~~~~~~~~~~~~~~~----------------------------------------
 
 
 /* API for application */
@@ -100,6 +194,7 @@ static int first_IF( lua_State *L) {
 // Module function map
 static const LUA_REG_TYPE net_if_map[] = {
   { LSTRKEY( "first_IF" ),             LFUNCVAL( first_IF ) },
+  { LSTRKEY( "first_adr" ),             LFUNCVAL( first_adr ) },
 
   { LSTRKEY( "__metatable" ),      LROVAL( net_if_map ) },
   { LNILKEY, LNILVAL }
