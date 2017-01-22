@@ -61,6 +61,18 @@ static int first_IF( lua_State *L) {
 }
 
 
+/*
+struct netif {
+  ** pointer to next in linked list *
+  struct netif *next;
+
+  ** IP address configuration in network byte order *
+  ip_addr_t ip_addr;
+  ip_addr_t netmask;
+  ip_addr_t gw;
+ */
+
+
 static int first_adr( lua_State *L) {
 
   c_printf("first interfaces at 0x%X next: 0x%X  IP: %X netmask: %X gw: %X  \n", 
@@ -71,16 +83,23 @@ static int first_adr( lua_State *L) {
 }
 
 
+void print_adr(struct netif *ifc) {
+  c_printf(" IP: %X netmask: %X gw: %X  \n",
+        ifc->ip_addr, ifc->netmask, ifc->gw
+   );
+
+}
+
+
+static int first_adr2( lua_State *L) {
+  c_printf("first interface print2 - ");
+  print_adr(netif_list);
+  return 0;
+}
+
+
+
 /*
-struct netif {
-  ** pointer to next in linked list *
-  struct netif *next;
-
-  ** IP address configuration in network byte order *
-  ip_addr_t ip_addr;
-  ip_addr_t netmask;
-  ip_addr_t gw;
-
    *  to pass a packet up the TCP/IP stack. 
   netif_input_fn input;
 
@@ -195,6 +214,8 @@ struct netif {
 static const LUA_REG_TYPE net_if_map[] = {
   { LSTRKEY( "first_IF" ),             LFUNCVAL( first_IF ) },
   { LSTRKEY( "first_adr" ),             LFUNCVAL( first_adr ) },
+  { LSTRKEY( "first_adr2" ),             LFUNCVAL( first_adr2 ) },
+
 
   { LSTRKEY( "__metatable" ),      LROVAL( net_if_map ) },
   { LNILKEY, LNILVAL }
