@@ -98,6 +98,16 @@ static int first_adr2( lua_State *L) {
 }
 
 
+// now try an iterator:
+// for(tmp=start;tmp->next!=NULL;tmp=tmp->next);
+static int list_adr( lua_State *L) {
+  struct netif *i ;
+  for ( i = netif_list ; i->next != NULL ; i = i->next ) {
+    print_adr(i);
+  } 
+}
+
+
 
 /*
    *  to pass a packet up the TCP/IP stack. 
@@ -215,6 +225,7 @@ static const LUA_REG_TYPE net_if_map[] = {
   { LSTRKEY( "first_IF" ),             LFUNCVAL( first_IF ) },
   { LSTRKEY( "first_adr" ),             LFUNCVAL( first_adr ) },
   { LSTRKEY( "first_adr2" ),             LFUNCVAL( first_adr2 ) },
+  { LSTRKEY( "list_adr" ),             LFUNCVAL( list_adr ) },
 
 
   { LSTRKEY( "__metatable" ),      LROVAL( net_if_map ) },
