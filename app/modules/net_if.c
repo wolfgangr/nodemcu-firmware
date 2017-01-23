@@ -156,6 +156,7 @@ static int list_adr( lua_State *L) {
     pprint_adr(i);
     // i = i->next
   } while ( i = i->next );  // can we rely on side effects in C?
+  return 0 ;
 }
 
 
