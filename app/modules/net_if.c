@@ -95,14 +95,13 @@ void print_adr(struct netif *ifc) {
 
 //pretty print IP adress from hex
 char* pp_IPadr (ip_addr_t IPx) {
-  char* IPstr;
-  IPstr = (char *) c_malloc(16) ;  // can we rely on deallocation of this on exit????
-	// nope, this is a memory eater ..... f'### C
+  char* IPstr =  (char *) c_malloc(16) ;  
+	// call free in the caller on the return value!
   ipaddr_ntoa_r(&IPx, IPstr, 16);
   return IPstr;
 }
 
-
+/*
 // pretty print hex IP adresses from interface given
 void pprint2_adr(struct netif *ifc) {
 
@@ -118,6 +117,22 @@ void pprint2_adr(struct netif *ifc) {
         IPstr, NMstr, GWstr
    );
 }
+*/
+
+
+// pretty print MAC aka hwaddr
+
+char* pprint_hwaddr (u8_t* hwa) {
+  
+  char* result = (char *) c_malloc( (3 * NETIF_MAX_HWADDR_LEN ) + 1) ;  
+  int i;
+  for (i=0; i < NETIF_MAX_HWADDR_LEN ; i++) {
+    c_sprintf((result + 3*i), "%02x:", hwa[i]) ;
+  }
+  c_sprintf (result + 3 * NETIF_MAX_HWADDR_LEN  , " ");
+  return result ;
+}
+
 
 
 // try more functional variant of memory safe version
@@ -128,6 +143,8 @@ void pprint_adr(struct netif *ifc) {
   char* NMstr = pp_IPadr(ifc->netmask);
   char* GWstr = pp_IPadr(ifc->gw); 
 
+  char* HWaddr = pprint_hwaddr(ifc->hwaddr);
+
   c_printf("Interface ");  
   c_printf("%.2s%i - ", ifc->name, ifc->num );
  
@@ -135,13 +152,15 @@ void pprint_adr(struct netif *ifc) {
 c_printf("hostname %s - ", ifc->hostname);
 #endif 
 
+  c_printf("\n    ");
   c_printf("IP: %s netmask: %s gw: %s ",
         IPstr, NMstr, GWstr
   );
+  c_printf("\n    ");
 
-  c_printf("mtu: %i hwaddr: %.*X flags: 0x%02X ", 
-	ifc->mtu, 2 * NETIF_MAX_HWADDR_LEN , &ifc->hwaddr, ifc->flags);
-
+  c_printf("HWaddr: %s ", HWaddr );
+  c_printf("mtu: %i flags: 0x%02X ", 
+	ifc->mtu,  ifc->flags);
   c_printf("\n");
 
 
@@ -149,7 +168,7 @@ c_printf("hostname %s - ", ifc->hostname);
   c_free ( IPstr );
   c_free ( NMstr );
   c_free ( GWstr );
-
+  c_free ( HWaddr );
 } 
 
 
