@@ -104,8 +104,17 @@ char* pp_IPadr (ip_addr_t IPx) {
 
 // pretty print hex IP adresses from interface given
 void pprint_adr(struct netif *ifc) {
+
+  char IPstr [16]; 
+  char NMstr [16];
+  char GWstr [16]; 
+
+  ipaddr_ntoa_r(&ifc->ip_addr, IPstr, 16);
+  ipaddr_ntoa_r(&ifc->netmask, NMstr, 16);
+  ipaddr_ntoa_r(&ifc->gw, GWstr, 16);
+
   c_printf(" IP: %s netmask: %s gw: %s  \n",
-        pp_IPadr(ifc->ip_addr), pp_IPadr(ifc->netmask), pp_IPadr(ifc->gw)
+        IPstr, NMstr, GWstr
    );
 
 }
