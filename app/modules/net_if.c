@@ -123,17 +123,33 @@ void pprint2_adr(struct netif *ifc) {
 // try more functional variant of memory safe version
 void pprint_adr(struct netif *ifc) {
 
+  // allocates memory - needs free before return!
   char* IPstr = pp_IPadr(ifc->ip_addr) ; 
   char* NMstr = pp_IPadr(ifc->netmask);
   char* GWstr = pp_IPadr(ifc->gw); 
-  
-  c_printf(" IP: %s netmask: %s gw: %s  \n",
+
+  c_printf("Interface ");  
+  c_printf("%.2s%i - ", ifc->name, ifc->num );
+ 
+#if LWIP_NETIF_HOSTNAME
+c_printf("hostname %s - ", ifc->hostname);
+#endif 
+
+  c_printf("IP: %s netmask: %s gw: %s ",
         IPstr, NMstr, GWstr
   );
 
+  c_printf("mtu: %i hwaddr: %.*X flags: 0x%2X ", 
+	ifc->mtu, ifc->hwaddr_len, ifc->hwaddr, ifc->flags);
+
+  c_printf("\n");
+
+
+  // cleanup memory
   c_free ( IPstr );
   c_free ( NMstr );
   c_free ( GWstr );
+
 } 
 
 
