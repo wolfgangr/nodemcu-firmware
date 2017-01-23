@@ -102,8 +102,9 @@ char* pp_IPadr (ip_addr_t IPx) {
   return IPstr;
 }
 
+
 // pretty print hex IP adresses from interface given
-void pprint_adr(struct netif *ifc) {
+void pprint2_adr(struct netif *ifc) {
 
   char IPstr [16]; 
   char NMstr [16];
@@ -116,8 +117,26 @@ void pprint_adr(struct netif *ifc) {
   c_printf(" IP: %s netmask: %s gw: %s  \n",
         IPstr, NMstr, GWstr
    );
-
 }
+
+
+// try more functional variant of memory safe version
+void pprint_adr(struct netif *ifc) {
+
+  char* IPstr = pp_IPadr(ifc->ip_addr) ; 
+  char* NMstr = pp_IPadr(ifc->netmask);
+  char* GWstr = pp_IPadr(ifc->gw); 
+  
+  c_printf(" IP: %s netmask: %s gw: %s  \n",
+        IPstr, NMstr, GWstr
+  );
+
+  c_free ( IPstr );
+  c_free ( NMstr );
+  c_free ( GWstr );
+} 
+
+
 
 
 // test caller with pointer
@@ -134,7 +153,7 @@ static int list_adr( lua_State *L) {
   struct netif *i = netif_list ;
   // for ( i = netif_list ; i->next != NULL ; i = i->next ) {
   do {
-    print_adr(i);
+    pprint_adr(i);
     // i = i->next
   } while ( i = i->next );  // can we rely on side effects in C?
 }
