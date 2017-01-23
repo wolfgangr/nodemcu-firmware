@@ -129,7 +129,7 @@ char* pprint_hwaddr (u8_t* hwa) {
   for (i=0; i < NETIF_MAX_HWADDR_LEN ; i++) {
     c_sprintf((result + 3*i), "%02x:", hwa[i]) ;
   }
-  c_sprintf (result + 3 * NETIF_MAX_HWADDR_LEN  , " ");
+  c_sprintf (result + 3 * NETIF_MAX_HWADDR_LEN -1  , " ");
   return result ;
 }
 
@@ -145,23 +145,24 @@ void pprint_adr(struct netif *ifc) {
 
   char* HWaddr = pprint_hwaddr(ifc->hwaddr);
 
-  c_printf("Interface ");  
+  // c_printf("Interface ");  
   c_printf("%.2s%i - ", ifc->name, ifc->num );
- 
-#if LWIP_NETIF_HOSTNAME
-c_printf("hostname %s - ", ifc->hostname);
-#endif 
 
+  c_printf("HWaddr: %s ", HWaddr );
+#if LWIP_NETIF_HOSTNAME
+  c_printf("hostname: %s ", ifc->hostname);
+#endif 
   c_printf("\n    ");
+
   c_printf("IP: %s netmask: %s gw: %s ",
         IPstr, NMstr, GWstr
   );
   c_printf("\n    ");
 
-  c_printf("HWaddr: %s ", HWaddr );
+  // c_printf("HWaddr: %s ", HWaddr );
   c_printf("mtu: %i flags: 0x%02X ", 
 	ifc->mtu,  ifc->flags);
-  c_printf("\n");
+  c_printf("\n\n");
 
 
   // cleanup memory
