@@ -140,7 +140,7 @@ c_printf("hostname %s - ", ifc->hostname);
   );
 
   c_printf("mtu: %i hwaddr: %.*X flags: 0x%2X ", 
-	ifc->mtu, ifc->hwaddr_len, ifc->hwaddr, ifc->flags);
+	ifc->mtu, NETIF_MAX_HWADDR_LEN , ifc->hwaddr, ifc->flags);
 
   c_printf("\n");
 
