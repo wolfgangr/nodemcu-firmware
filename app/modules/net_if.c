@@ -53,6 +53,7 @@
 
 static lua_State *gL = NULL;
 
+// bare test/learning example
 static int first_IF( lua_State *L) {
 
   c_printf("netif_list: 0x%X \n", netif_list ) ;
@@ -72,7 +73,7 @@ struct netif {
   ip_addr_t gw;
  */
 
-
+// still test/learning
 static int first_adr( lua_State *L) {
 
   c_printf("first interfaces at 0x%X next: 0x%X  IP: %X netmask: %X gw: %X  \n", 
@@ -83,6 +84,8 @@ static int first_adr( lua_State *L) {
 }
 
 
+
+// print hex IP adresses from interface given
 void print_adr(struct netif *ifc) {
   c_printf(" IP: %X netmask: %X gw: %X  \n",
         ifc->ip_addr, ifc->netmask, ifc->gw
@@ -90,10 +93,28 @@ void print_adr(struct netif *ifc) {
 
 }
 
+//pretty print IP adress from hex
+char* pp_IPadr (ip_addr_t IPx) {
+  char* IPstr;
+  IPstr = (char *) c_malloc(16) ;  // can we rely on deallocation of this on exit????
+	// nope, this is a memory eater ..... f'### C
+  ipaddr_ntoa_r(&IPx, IPstr, 16);
+  return IPstr;
+}
 
+// pretty print hex IP adresses from interface given
+void pprint_adr(struct netif *ifc) {
+  c_printf(" IP: %s netmask: %s gw: %s  \n",
+        pp_IPadr(ifc->ip_addr), pp_IPadr(ifc->netmask), pp_IPadr(ifc->gw)
+   );
+
+}
+
+
+// test caller with pointer
 static int first_adr2( lua_State *L) {
   c_printf("first interface print2 - ");
-  print_adr(netif_list);
+  pprint_adr(netif_list);
   return 0;
 }
 
