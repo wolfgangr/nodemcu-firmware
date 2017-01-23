@@ -101,27 +101,8 @@ char* pp_IPadr (ip_addr_t IPx) {
   return IPstr;
 }
 
-/*
-// pretty print hex IP adresses from interface given
-void pprint2_adr(struct netif *ifc) {
-
-  char IPstr [16]; 
-  char NMstr [16];
-  char GWstr [16]; 
-
-  ipaddr_ntoa_r(&ifc->ip_addr, IPstr, 16);
-  ipaddr_ntoa_r(&ifc->netmask, NMstr, 16);
-  ipaddr_ntoa_r(&ifc->gw, GWstr, 16);
-
-  c_printf(" IP: %s netmask: %s gw: %s  \n",
-        IPstr, NMstr, GWstr
-   );
-}
-*/
-
 
 // pretty print MAC aka hwaddr
-
 char* pprint_hwaddr (u8_t* hwa) {
   
   char* result = (char *) c_malloc( (3 * NETIF_MAX_HWADDR_LEN ) + 1) ;  
@@ -133,9 +114,30 @@ char* pprint_hwaddr (u8_t* hwa) {
   return result ;
 }
 
+// pretty print flags
+char* pprint_flags (u8_t flgs) {
+  // char result[50];
+  char* result =  (char *) c_malloc(50) ;
+
+// up brcst ptp dhcp lnkup etharp ethernet igmp
+// ....|....1....|....2....|....3....|....4....|....5....|....6
+
+  c_sprintf ( result, "%s%s%s%s%s%s%s%s", 
+    ((flgs & NETIF_FLAG_UP) ? "UP " : "DN " ) , 
+    ((flgs & NETIF_FLAG_BROADCAST) ? "BRCST " : "" ) ,
+    ((flgs & NETIF_FLAG_POINTTOPOINT) ? "PTP " : "" ) ,
+    ((flgs & NETIF_FLAG_DHCP) ? "DHCP " : "" ) ,
+    ((flgs & NETIF_FLAG_LINK_UP) ? "LNKUP " : "LNKDN " ) ,
+    ((flgs & NETIF_FLAG_ETHARP) ? "ETHARP " : "" ) ,
+    ((flgs & NETIF_FLAG_ETHERNET) ? "ETHERNET " : "" ) ,
+    ((flgs & NETIF_FLAG_IGMP) ? "IGMP " : "" ) 
+  ) ; 
+  return result ;
+}
 
 
-// try more functional variant of memory safe version
+
+// assemble the bits and arrange in a nice print like ifconfig 
 void pprint_adr(struct netif *ifc) {
 
   // allocates memory - needs free before return!
@@ -144,6 +146,7 @@ void pprint_adr(struct netif *ifc) {
   char* GWstr = pp_IPadr(ifc->gw); 
 
   char* HWaddr = pprint_hwaddr(ifc->hwaddr);
+  char* Flags = pprint_flags(ifc->flags);
 
   // c_printf("Interface ");  
   c_printf("%.2s%i - ", ifc->name, ifc->num );
@@ -162,16 +165,17 @@ void pprint_adr(struct netif *ifc) {
   // c_printf("HWaddr: %s ", HWaddr );
   c_printf("mtu: %i flags: 0x%02X ", 
 	ifc->mtu,  ifc->flags);
-  c_printf("\n\n");
+  c_printf(" %s", Flags); 
 
+  c_printf("\n\n");
 
   // cleanup memory
   c_free ( IPstr );
   c_free ( NMstr );
   c_free ( GWstr );
   c_free ( HWaddr );
+  c_free ( Flags );
 } 
-
 
 
 
@@ -183,15 +187,12 @@ static int first_adr2( lua_State *L) {
 }
 
 
-// now try an iterator:
-// for(tmp=start;tmp->next!=NULL;tmp=tmp->next);
+// iterate over all interfaces
 static int list_adr( lua_State *L) {
   struct netif *i = netif_list ;
-  // for ( i = netif_list ; i->next != NULL ; i = i->next ) {
   do {
     pprint_adr(i);
-    // i = i->next
-  } while ( i = i->next );  // can we rely on side effects in C?
+  } while ( i = i->next );  
   return 0 ;
 }
 
