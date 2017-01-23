@@ -139,8 +139,8 @@ c_printf("hostname %s - ", ifc->hostname);
         IPstr, NMstr, GWstr
   );
 
-  c_printf("mtu: %i hwaddr: %.*X flags: 0x%2X ", 
-	ifc->mtu, NETIF_MAX_HWADDR_LEN , ifc->hwaddr, ifc->flags);
+  c_printf("mtu: %i hwaddr: %.*X flags: 0x%02X ", 
+	ifc->mtu, 2 * NETIF_MAX_HWADDR_LEN , &ifc->hwaddr, ifc->flags);
 
   c_printf("\n");
 
