@@ -47,6 +47,8 @@
 #include "lwip/netifapi.h"
 #include "lwip/netif.h"
 
+#include "lwip/dhcp.h"
+
 // other dependencies should be chain loaded, I suppose
 
 
@@ -166,8 +168,54 @@ void pprint_adr(struct netif *ifc) {
   c_printf("mtu: %i flags: 0x%02X ", 
 	ifc->mtu,  ifc->flags);
   c_printf(" %s", Flags); 
+  c_printf("\n    ");
 
-  c_printf("\n\n");
+
+#if LWIP_DHCP
+  /** the DHCP client state information for this netif */
+
+/*
+  struct dhcp *dhcp;
+  struct udp_pcb *dhcps_pcb;	//dhcps
+  dhcp_event_fn dhcp_event;
+
+.... dhcp.h....
+interesting fields:
+ u8_t state;
+u8_t tries;
+ ip_addr_t server_ip_addr; 
+u32_t offered_t0_lease;
+*/ 
+
+  // struct dhcp *dhcp;
+  if (ifc->dhcp != NULL ) {
+    char* DHCsrv = pp_IPadr(ifc->dhcp->server_ip_addr);
+    c_printf("DHCP server: %s state: %i tries: %i lease time: %i", 
+  	DHCsrv, ifc->dhcp->state, ifc->dhcp->tries, 
+  	ifc->dhcp->offered_t0_lease ); 
+    c_printf("\n    ");
+    c_free (DHCsrv);
+  }
+
+#endif /* LWIP_DHCP */
+
+
+
+#if LWIP_AUTOIP
+// untestet draft - uncommented
+//   /** the AutoIP client state information for this netif */
+//  // struct autoip *autoip;
+//    char* AIPstr = pp_IPadr(ifc->autoip->llipaddr);
+//    c_printf("autoIP llIPadr: %s state: %i sent-num: %i ttw: %i lastcfl: %i tried-llIP: %i", 
+// 	AIPstr, ifc->autoip->state, ifc->autoip-> sent_num, 
+//	ifc->autoip->ttw,  ifc->autoip->lastconflict,  ifc->autoip->tried_llipaddr 
+//   )
+//   c_free(AIPstr); 
+//   c_printf("\n    ");
+//  // foo do we get here at all - obviously we don't
+#endif
+
+  c_printf("\n");
 
   // cleanup memory
   c_free ( IPstr );
